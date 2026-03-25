@@ -1,0 +1,37 @@
+package components
+
+templ LandingPage() {
+@Layout("templbook — Storybook for templ") {
+@Hero()
+<hr style="border: none; border-top: 1px solid #f0f0f0;" />
+@Features(DefaultFeatures)
+<hr style="border: none; border-top: 1px solid #f0f0f0;" />
+@GettingStarted()
+<footer style="text-align:center; padding: 32px 24px; font-size: 13px; color: #aaa; border-top: 1px solid #f0f0f0;">
+	Built with templ · MIT License
+</footer>
+}
+}
+
+var DefaultFeatures = []Feature{
+{
+Icon: "⚡",
+Title: "Zero config",
+Body: "One import and one function call. No config files, no build steps beyond what templ already requires.",
+},
+{
+Icon: "🔒",
+Title: "Type-safe",
+Body: "Stories are plain Go values. Your compiler catches broken components before the browser does.",
+},
+{
+Icon: "🖼",
+Title: "Isolated previews",
+Body: "Every story renders in its own iframe, exactly as it will appear in your app — no style leakage.",
+},
+{
+Icon: "🎨",
+Title: "Decorator support",
+Body: "Wrap stories with your layout or global styles using a single WithDecorator call on the book.",
+},
+}

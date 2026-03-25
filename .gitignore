@@ -1,0 +1,10 @@
+# build artifacts
+dist/
+tmp/
+twittempl
+
+# OS
+.DS_Store
+
+# editor
+.claude-container

@@ -1,0 +1,25 @@
+package components
+
+var codeBlockStyleHandle = templ.NewOnceHandle()
+
+templ CodeBlock() {
+	@codeBlockStyleHandle.Once() {
+		<style>
+			.codeblock {
+				background: #f6f8fa;
+				border: 1px solid #e4e4e4;
+				border-radius: 8px;
+				padding: 14px 18px;
+				font-family: "SF Mono", "Fira Code", monospace;
+				font-size: 13px;
+				color: #333;
+				line-height: 1.7;
+				overflow-x: auto;
+				white-space: pre;
+			}
+		</style>
+	}
+	<div class="codeblock">
+		{ children... }
+	</div>
+}

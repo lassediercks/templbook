@@ -1,0 +1,6 @@
+[build]
+  cmd = "go build -o /tmp/templbook-stories ./example"
+  bin = "/tmp/templbook-stories"
+  include_ext = ["go", "templ", "css"]
+  exclude_dir = ["tmp", "dist"]
+  delay = 300
