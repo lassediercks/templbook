@@ -1,0 +1,59 @@
+package components
+
+type ButtonVariant string
+
+const (
+	ButtonVariantPrimary ButtonVariant = "primary"
+	ButtonVariantOutline ButtonVariant = "outline"
+)
+
+templ Button(label string, href string, variant ButtonVariant) {
+	@ButtonStyles()
+	<a class={ "btn-" + string(variant) } href={ templ.URL(href) }>{ label }</a>
+}
+
+templ ButtonPrimary(label string, href string) {
+	@ButtonStyles()
+	<a class="btn-primary" href={ templ.URL(href) }>{ label }</a>
+}
+
+templ ButtonOutline(label string, href string) {
+	@ButtonStyles()
+	<a class="btn-outline" href={ templ.URL(href) }>{ label }</a>
+}
+
+var buttonStyleHandle = templ.NewOnceHandle()
+
+templ ButtonStyles() {
+	@buttonStyleHandle.Once() {
+	<style>
+		.btn-primary {
+			background: #111;
+			color: #fff;
+			padding: 12px 28px;
+			border-radius: 8px;
+			font-size: 15px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: background 0.15s;
+			text-decoration: none;
+			display: inline-block;
+		}
+		.btn-primary:hover { background: #333; }
+		.btn-outline {
+			background: transparent;
+			color: #111;
+			padding: 12px 28px;
+			border-radius: 8px;
+			font-size: 15px;
+			font-weight: 600;
+			border: 1.5px solid #e0e0e0;
+			cursor: pointer;
+			transition: border-color 0.15s, background 0.15s;
+			text-decoration: none;
+			display: inline-block;
+		}
+		.btn-outline:hover { border-color: #aaa; background: #fafafa; }
+	</style>
+	}
+}

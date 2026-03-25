@@ -1,0 +1,63 @@
+package components
+
+type Feature struct {
+	Icon  string
+	Title string
+	Body  string
+}
+
+templ Features(items []Feature) {
+	<section class="features">
+		<style>
+			.features {
+				padding: 64px 24px 80px;
+				max-width: 960px;
+				margin: 0 auto;
+			}
+			.features-heading {
+				text-align: center;
+				font-size: 28px;
+				font-weight: 800;
+				letter-spacing: -0.02em;
+				color: #111;
+				margin-bottom: 48px;
+			}
+			.features-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+				gap: 24px;
+			}
+			.feature-card {
+				background: #fafafa;
+				border: 1px solid #e8e8e8;
+				border-radius: 12px;
+				padding: 24px;
+			}
+			.feature-icon {
+				font-size: 22px;
+				margin-bottom: 12px;
+			}
+			.feature-title {
+				font-size: 15px;
+				font-weight: 700;
+				color: #111;
+				margin-bottom: 6px;
+			}
+			.feature-body {
+				font-size: 14px;
+				color: #666;
+				line-height: 1.6;
+			}
+		</style>
+		<h2 class="features-heading">Everything you need</h2>
+		<div class="features-grid">
+			for _, f := range items {
+				<div class="feature-card">
+					<div class="feature-icon">{ f.Icon }</div>
+					<div class="feature-title">{ f.Title }</div>
+					<p class="feature-body">{ f.Body }</p>
+				</div>
+			}
+		</div>
+	</section>
+}

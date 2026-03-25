@@ -1,0 +1,136 @@
+package components
+
+templ TokensColors() {
+	<div class="tokens-colors">
+		<style>
+			.tokens-colors {
+				padding: 32px;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+			}
+			.tokens-section {
+				margin-bottom: 40px;
+			}
+			.tokens-section-title {
+				font-size: 11px;
+				font-weight: 700;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				color: #999;
+				margin-bottom: 16px;
+			}
+			.swatch-grid {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px;
+			}
+			.swatch {
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+				width: 100px;
+			}
+			.swatch-color {
+				width: 100%;
+				height: 56px;
+				border-radius: 8px;
+				border: 1px solid rgba(0,0,0,0.06);
+			}
+			.swatch-name {
+				font-size: 11px;
+				font-weight: 600;
+				color: #111;
+			}
+			.swatch-value {
+				font-size: 11px;
+				color: #999;
+				font-family: "SF Mono", "Fira Code", monospace;
+			}
+			.gradient-swatch .swatch-color {
+				width: 212px;
+			}
+			.gradient-swatch {
+				width: 212px;
+			}
+		</style>
+		<div class="tokens-section">
+			<div class="tokens-section-title">Base</div>
+			<div class="swatch-grid">
+				<div class="swatch">
+					<div class="swatch-color" style="background:#111"></div>
+					<div class="swatch-name">Ink</div>
+					<div class="swatch-value">#111</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#333"></div>
+					<div class="swatch-name">Ink Light</div>
+					<div class="swatch-value">#333</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#555"></div>
+					<div class="swatch-name">Muted</div>
+					<div class="swatch-value">#555</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#999"></div>
+					<div class="swatch-name">Subtle</div>
+					<div class="swatch-value">#999</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#aaa"></div>
+					<div class="swatch-name">Placeholder</div>
+					<div class="swatch-value">#aaa</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#e0e0e0"></div>
+					<div class="swatch-name">Border</div>
+					<div class="swatch-value">#e0e0e0</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#f4f4f4"></div>
+					<div class="swatch-name">Surface</div>
+					<div class="swatch-value">#f4f4f4</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#fff"></div>
+					<div class="swatch-name">White</div>
+					<div class="swatch-value">#fff</div>
+				</div>
+			</div>
+		</div>
+		<div class="tokens-section">
+			<div class="tokens-section-title">Brand</div>
+			<div class="swatch-grid">
+				<div class="swatch">
+					<div class="swatch-color" style="background:#2563eb"></div>
+					<div class="swatch-name">Blue</div>
+					<div class="swatch-value">#2563eb</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#7c3aed"></div>
+					<div class="swatch-name">Purple</div>
+					<div class="swatch-value">#7c3aed</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#f0f4ff"></div>
+					<div class="swatch-name">Blue Tint</div>
+					<div class="swatch-value">#f0f4ff</div>
+				</div>
+				<div class="swatch">
+					<div class="swatch-color" style="background:#059669"></div>
+					<div class="swatch-name">Green</div>
+					<div class="swatch-value">#059669</div>
+				</div>
+			</div>
+		</div>
+		<div class="tokens-section">
+			<div class="tokens-section-title">Gradients</div>
+			<div class="swatch-grid">
+				<div class="swatch gradient-swatch">
+					<div class="swatch-color" style="background:linear-gradient(135deg,#2563eb,#7c3aed)"></div>
+					<div class="swatch-name">Brand Gradient</div>
+					<div class="swatch-value">135deg · Blue → Purple</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}

@@ -1,0 +1,197 @@
+package templbook
+
+templ defaultPage(child templ.Component, code string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<style>
+				*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+				body {
+					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+					background: #fff;
+					color: #111;
+					line-height: 1.6;
+					-webkit-font-smoothing: antialiased;
+					display: flex;
+					flex-direction: column;
+					min-height: 100vh;
+				}
+				a { color: inherit; text-decoration: none; }
+			</style>
+		</head>
+		<body>
+			<div style="flex:1;padding:1em">
+				@child
+			</div>
+			@codeBlock(code)
+		</body>
+	</html>
+}
+
+templ shell(b *Book, storyPath func(g, s int) string, cssPath string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ b.Title } — templbook</title>
+			<link rel="stylesheet" href={ cssPath }/>
+		</head>
+		<body>
+			<div class="sidebar">
+				<div class="sidebar-header">
+					<div class="sidebar-title">{ b.Title }</div>
+				</div>
+				<nav class="sidebar-nav">
+					for _, cat := range b.GroupedByCategory() {
+						<details open>
+							<summary class="category-label">{ cat.Name }</summary>
+							for _, item := range cat.Groups {
+								<div class="group-label">{ item.Group.Name }</div>
+								for si, s := range item.Group.Stories {
+									<button
+										class="story-btn"
+										data-src={ storyPath(item.Index, si) }
+										data-group={ item.Group.Name }
+										data-name={ s.Name }
+										data-props={ propsJSON(s.Props) }
+										onclick="pick(this)"
+									>
+										<span class="story-dot"></span>{ s.Name }
+									</button>
+								}
+							}
+						</details>
+					}
+				</nav>
+			</div>
+			<div class="main">
+				<div class="topbar">
+					<span class="topbar-crumb" id="crumb-group">templbook</span>
+					<span class="topbar-sep" id="crumb-sep" style="display:none">/</span>
+					<span class="topbar-crumb current" id="crumb-story" style="display:none"></span>
+				</div>
+				<iframe id="canvas" class="canvas" src="about:blank"></iframe>
+				<div class="controls" id="controls"></div>
+			</div>
+			<script>
+				function slugify(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+				let active = null;
+				function pick(btn, push) {
+					if (active) active.classList.remove('active');
+					btn.classList.add('active');
+					active = btn;
+					renderControls(btn);
+					document.getElementById('canvas').src = btn.dataset.src;
+					document.getElementById('crumb-group').textContent = btn.dataset.group;
+					document.getElementById('crumb-story').textContent = btn.dataset.name;
+					document.getElementById('crumb-sep').style.display = '';
+					document.getElementById('crumb-story').style.display = '';
+					if (push !== false) history.pushState(null, '', '/' + slugify(btn.dataset.group) + '/' + slugify(btn.dataset.name));
+				}
+				function pickFromPath(path, fallback) {
+					const [group, story] = path.replace(/^\//, '').split('/');
+					const btn = group && [...document.querySelectorAll('.story-btn')].find(b =>
+						slugify(b.dataset.group) === group && (!story || slugify(b.dataset.name) === story)
+					);
+					if (btn) pick(btn, false); else if (fallback) { const f = document.querySelector('.story-btn'); if (f) pick(f, false); }
+				}
+				window.addEventListener('load', function() { pickFromPath(location.pathname, true); });
+				window.addEventListener('popstate', function() { pickFromPath(location.pathname, false); });
+				let ctrlProps = [], ctrlTab = 'controls';
+				function getVals(props) {
+					const vals = {};
+					props.forEach(function(p) { vals[p.name] = p.default; });
+					const iframe = document.getElementById('canvas');
+					if (iframe.src && iframe.src !== 'about:blank') {
+						try { const u = new URL(iframe.src); props.forEach(function(p) { const v = u.searchParams.get(p.name); if (v !== null) vals[p.name] = v; }); } catch(e) {}
+					}
+					return vals;
+				}
+				function buildFields(props, vals) {
+					return props.map(function(p) {
+						const val = vals[p.name] !== undefined ? vals[p.name] : p.default;
+						const lbl = p.label || p.name;
+						if (p.type === 'select') {
+							const opts = (p.options || []).map(function(o) { return '<option value="' + o + '"' + (o === val ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+							return '<label class="ctrl-field"><span class="ctrl-label">' + lbl + '</span><select class="ctrl-select" data-prop="' + p.name + '" onchange="updateProp(this)">' + opts + '</select></label>';
+						}
+						if (p.type === 'bool') {
+							return '<label class="ctrl-field ctrl-field--bool"><input type="checkbox" class="ctrl-check" data-prop="' + p.name + '"' + (val === 'true' ? ' checked' : '') + ' onchange="updateProp(this)"><span class="ctrl-label">' + lbl + '</span></label>';
+						}
+						return '<label class="ctrl-field"><span class="ctrl-label">' + lbl + '</span><input type="text" class="ctrl-input" data-prop="' + p.name + '" value="' + (val || '') + '" oninput="updateProp(this)"></label>';
+					}).join('');
+				}
+				function renderControls(btn) {
+					const panel = document.getElementById('controls');
+					const raw = btn.dataset.props;
+					if (!raw) { panel.style.display = 'none'; return; }
+					const props = JSON.parse(raw);
+					if (!props.length) { panel.style.display = 'none'; return; }
+					ctrlProps = props;
+					panel.style.display = 'flex';
+					const vals = getVals(props);
+					const ac = ctrlTab === 'controls' ? ' active' : '';
+					const aj = ctrlTab === 'json' ? ' active' : '';
+					const fd = ctrlTab === 'controls' ? 'flex' : 'none';
+					const jd = ctrlTab === 'json' ? 'block' : 'none';
+					panel.innerHTML =
+						'<div class="ctrl-tabs">' +
+							'<button class="ctrl-tab' + ac + '" data-tab="controls" onclick="switchCtrlTab(this.dataset.tab)">Controls</button>' +
+							'<button class="ctrl-tab' + aj + '" data-tab="json" onclick="switchCtrlTab(this.dataset.tab)">JSON</button>' +
+						'</div>' +
+						'<div class="ctrl-fields" id="ctrl-fields" style="display:' + fd + '">' + buildFields(props, vals) + '</div>' +
+						'<textarea class="ctrl-json" id="ctrl-json-editor" style="display:' + jd + '" oninput="applyJSON(this.value)">' + JSON.stringify(vals, null, 2) + '</textarea>';
+				}
+				function switchCtrlTab(tab) {
+					ctrlTab = tab;
+					document.querySelectorAll('.ctrl-tab').forEach(function(b) { b.classList.remove('active'); });
+					document.querySelectorAll('.ctrl-tab').forEach(function(b) { if (b.textContent.toLowerCase() === tab || (tab==='controls' && b.textContent==='Controls') || (tab==='json' && b.textContent==='JSON')) b.classList.add('active'); });
+					const fields = document.getElementById('ctrl-fields');
+					const editor = document.getElementById('ctrl-json-editor');
+					if (tab === 'controls') {
+						if (fields) fields.style.display = 'flex';
+						if (editor) editor.style.display = 'none';
+					} else {
+						if (fields) fields.style.display = 'none';
+						if (editor) { editor.style.display = 'block'; editor.value = JSON.stringify(getVals(ctrlProps), null, 2); }
+					}
+				}
+				function updateProp(el) {
+					const iframe = document.getElementById('canvas');
+					if (!iframe.src || iframe.src === 'about:blank') return;
+					const url = new URL(iframe.src);
+					url.searchParams.set(el.dataset.prop, el.type === 'checkbox' ? String(el.checked) : el.value);
+					iframe.src = url.toString();
+				}
+				function applyJSON(text) {
+					try {
+						const obj = JSON.parse(text);
+						const iframe = document.getElementById('canvas');
+						if (!iframe.src || iframe.src === 'about:blank') return;
+						const url = new URL(iframe.src);
+						Object.keys(obj).forEach(function(k) { url.searchParams.set(k, String(obj[k])); });
+						iframe.src = url.toString();
+					} catch(e) {}
+				}
+				(function() {
+					let token = null;
+					function connect() {
+						const es = new EventSource('/sse');
+						es.onmessage = function(e) {
+							if (token !== null && e.data !== token) {
+								const iframe = document.getElementById('canvas');
+								if (iframe.src && iframe.src !== 'about:blank') iframe.src = iframe.src;
+							}
+							token = e.data;
+						};
+						es.onerror = function() { es.close(); setTimeout(connect, 2000); };
+					}
+					connect();
+				})();
+			</script>
+		</body>
+	</html>
+}
