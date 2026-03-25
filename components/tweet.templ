@@ -1,0 +1,118 @@
+package components
+
+import "fmt"
+
+// Tweet holds the data for a single tweet card.
+type Tweet struct {
+	ID          string
+	DisplayName string
+	Username    string
+	TimeAgo     string
+	Body        string
+	Replies     int
+	Retweets    int
+	Likes       int
+	Views       int
+	AvatarColor string // CSS background color for the initials avatar
+}
+
+// avatarInitials returns up to two initials from a display name.
+func avatarInitials(name string) string {
+	runes := []rune(name)
+	initials := ""
+	upper := true
+	for _, r := range runes {
+		if upper && r != ' ' {
+			initials += string(r)
+			upper = false
+		}
+		if r == ' ' {
+			upper = true
+		}
+		if len([]rune(initials)) == 2 {
+			break
+		}
+	}
+	return initials
+}
+
+// fmtCount formats an integer with k/M suffix for display.
+func fmtCount(n int) string {
+	switch {
+	case n >= 1_000_000:
+		return fmt.Sprintf("%.1fM", float64(n)/1_000_000)
+	case n >= 1_000:
+		return fmt.Sprintf("%.1fk", float64(n)/1_000)
+	default:
+		return fmt.Sprintf("%d", n)
+	}
+}
+
+templ TweetCard(t Tweet) {
+	<article class="tweet-card">
+		<div class="avatar" style={ "background:" + t.AvatarColor }>
+			{ avatarInitials(t.DisplayName) }
+		</div>
+		<div class="tweet-body">
+			<div class="tweet-header">
+				<span class="tweet-display-name">{ t.DisplayName }</span>
+				<span class="tweet-username">{ "@" + t.Username }</span>
+				<span class="tweet-dot">·</span>
+				<span class="tweet-time">{ t.TimeAgo }</span>
+			</div>
+			<p class="tweet-text">{ t.Body }</p>
+			<div class="tweet-actions">
+				<!-- Reply -->
+				<button class="tweet-action reply" title="Reply">
+					<svg viewBox="0 0 24 24">
+						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+					</svg>
+					if t.Replies > 0 {
+						<span>{ fmtCount(t.Replies) }</span>
+					}
+				</button>
+				<!-- Retweet -->
+				<button class="tweet-action retweet" title="Retweet">
+					<svg viewBox="0 0 24 24">
+						<polyline points="17 1 21 5 17 9"></polyline>
+						<path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+						<polyline points="7 23 3 19 7 15"></polyline>
+						<path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+					</svg>
+					if t.Retweets > 0 {
+						<span>{ fmtCount(t.Retweets) }</span>
+					}
+				</button>
+				<!-- Like -->
+				<button class="tweet-action like" title="Like">
+					<svg viewBox="0 0 24 24">
+						<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+					</svg>
+					if t.Likes > 0 {
+						<span>{ fmtCount(t.Likes) }</span>
+					}
+				</button>
+				<!-- Views -->
+				<button class="tweet-action views" title="Views">
+					<svg viewBox="0 0 24 24">
+						<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+						<circle cx="12" cy="12" r="3"></circle>
+					</svg>
+					if t.Views > 0 {
+						<span>{ fmtCount(t.Views) }</span>
+					}
+				</button>
+				<!-- Share -->
+				<button class="tweet-action share" title="Share">
+					<svg viewBox="0 0 24 24">
+						<circle cx="18" cy="5" r="3"></circle>
+						<circle cx="6" cy="12" r="3"></circle>
+						<circle cx="18" cy="19" r="3"></circle>
+						<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+						<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+					</svg>
+				</button>
+			</div>
+		</div>
+	</article>
+}

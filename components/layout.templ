@@ -1,0 +1,559 @@
+package components
+
+templ Layout(title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title }</title>
+			<style>
+				*, *::before, *::after {
+					box-sizing: border-box;
+					margin: 0;
+					padding: 0;
+				}
+
+				body {
+					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+					background-color: #f7f9f9;
+					color: #0f1419;
+					min-height: 100vh;
+				}
+
+				/* ── Layout ── */
+				.app-wrapper {
+					display: flex;
+					justify-content: center;
+					min-height: 100vh;
+				}
+
+				.sidebar {
+					width: 275px;
+					padding: 12px;
+					position: sticky;
+					top: 0;
+					height: 100vh;
+					display: flex;
+					flex-direction: column;
+					align-items: flex-start;
+					border-right: 1px solid #eff3f4;
+				}
+
+				.main-content {
+					flex: 1;
+					max-width: 600px;
+					border-right: 1px solid #eff3f4;
+					min-height: 100vh;
+				}
+
+				.right-panel {
+					width: 350px;
+					padding: 12px 24px;
+					display: flex;
+					flex-direction: column;
+					gap: 16px;
+				}
+
+				/* ── Sidebar ── */
+				.sidebar-logo {
+					width: 48px;
+					height: 48px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					border-radius: 50%;
+					transition: background 0.2s;
+					cursor: pointer;
+					margin-bottom: 4px;
+				}
+
+				.sidebar-logo:hover {
+					background: #e7f3ff;
+				}
+
+				.sidebar-logo svg {
+					width: 28px;
+					height: 28px;
+					fill: #1d9bf0;
+				}
+
+				.sidebar-nav {
+					list-style: none;
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					gap: 4px;
+				}
+
+				.nav-item {
+					display: flex;
+					align-items: center;
+					gap: 16px;
+					padding: 12px 16px;
+					border-radius: 9999px;
+					cursor: pointer;
+					transition: background 0.2s;
+					font-size: 20px;
+					font-weight: 400;
+					color: #0f1419;
+					text-decoration: none;
+					width: fit-content;
+				}
+
+				.nav-item:hover {
+					background: #e7f3ff;
+					color: #1d9bf0;
+				}
+
+				.nav-item.active {
+					font-weight: 700;
+				}
+
+				.nav-icon {
+					width: 26px;
+					height: 26px;
+					stroke: currentColor;
+					fill: none;
+					stroke-width: 2;
+					stroke-linecap: round;
+					stroke-linejoin: round;
+				}
+
+				.nav-label {
+					font-size: 20px;
+				}
+
+				.tweet-btn {
+					margin-top: 16px;
+					background: #1d9bf0;
+					color: #fff;
+					border: none;
+					border-radius: 9999px;
+					padding: 16px 32px;
+					font-size: 17px;
+					font-weight: 700;
+					cursor: pointer;
+					width: 220px;
+					transition: background 0.2s;
+				}
+
+				.tweet-btn:hover {
+					background: #1a8cd8;
+				}
+
+				/* ── Column header ── */
+				.column-header {
+					position: sticky;
+					top: 0;
+					background: rgba(247, 249, 249, 0.85);
+					backdrop-filter: blur(12px);
+					-webkit-backdrop-filter: blur(12px);
+					border-bottom: 1px solid #eff3f4;
+					padding: 16px 20px;
+					z-index: 10;
+				}
+
+				.column-header h1 {
+					font-size: 20px;
+					font-weight: 700;
+					color: #0f1419;
+				}
+
+				.column-header p {
+					font-size: 13px;
+					color: #536471;
+					margin-top: 2px;
+				}
+
+				/* ── Compose box ── */
+				.compose-box {
+					display: flex;
+					gap: 12px;
+					padding: 16px 20px;
+					border-bottom: 8px solid #eff3f4;
+				}
+
+				.compose-avatar {
+					width: 40px;
+					height: 40px;
+					border-radius: 50%;
+					background: #1d9bf0;
+					color: #fff;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-weight: 700;
+					font-size: 15px;
+					flex-shrink: 0;
+					cursor: pointer;
+				}
+
+				.compose-right {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
+					gap: 12px;
+				}
+
+				.compose-textarea {
+					width: 100%;
+					border: none;
+					outline: none;
+					resize: none;
+					font-size: 20px;
+					font-family: inherit;
+					color: #0f1419;
+					background: transparent;
+					min-height: 80px;
+					line-height: 1.4;
+				}
+
+				.compose-textarea::placeholder {
+					color: #536471;
+				}
+
+				.compose-footer {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					border-top: 1px solid #eff3f4;
+					padding-top: 12px;
+				}
+
+				.compose-tools {
+					display: flex;
+					gap: 4px;
+				}
+
+				.compose-tool-btn {
+					width: 36px;
+					height: 36px;
+					border-radius: 50%;
+					border: none;
+					background: transparent;
+					cursor: pointer;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					color: #1d9bf0;
+					transition: background 0.2s;
+				}
+
+				.compose-tool-btn:hover {
+					background: #e7f3ff;
+				}
+
+				.compose-tool-btn svg {
+					width: 20px;
+					height: 20px;
+					stroke: currentColor;
+					fill: none;
+					stroke-width: 2;
+					stroke-linecap: round;
+					stroke-linejoin: round;
+				}
+
+				.compose-submit {
+					background: #1d9bf0;
+					color: #fff;
+					border: none;
+					border-radius: 9999px;
+					padding: 10px 20px;
+					font-size: 15px;
+					font-weight: 700;
+					cursor: pointer;
+					transition: background 0.2s;
+				}
+
+				.compose-submit:hover {
+					background: #1a8cd8;
+				}
+
+				/* ── Tweet card ── */
+				.tweet-card {
+					display: flex;
+					gap: 12px;
+					padding: 16px 20px;
+					border-bottom: 1px solid #eff3f4;
+					cursor: pointer;
+					transition: background 0.15s;
+				}
+
+				.tweet-card:hover {
+					background: rgba(0, 0, 0, 0.03);
+				}
+
+				.avatar {
+					width: 40px;
+					height: 40px;
+					border-radius: 50%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-weight: 700;
+					font-size: 15px;
+					color: #fff;
+					flex-shrink: 0;
+					cursor: pointer;
+					text-transform: uppercase;
+				}
+
+				.tweet-body {
+					flex: 1;
+					min-width: 0;
+				}
+
+				.tweet-header {
+					display: flex;
+					align-items: baseline;
+					gap: 6px;
+					flex-wrap: wrap;
+					margin-bottom: 4px;
+				}
+
+				.tweet-display-name {
+					font-weight: 700;
+					font-size: 15px;
+					color: #0f1419;
+				}
+
+				.tweet-username {
+					color: #536471;
+					font-size: 15px;
+				}
+
+				.tweet-dot {
+					color: #536471;
+					font-size: 15px;
+				}
+
+				.tweet-time {
+					color: #536471;
+					font-size: 15px;
+				}
+
+				.tweet-text {
+					font-size: 15px;
+					line-height: 1.5;
+					color: #0f1419;
+					margin-bottom: 12px;
+					word-break: break-word;
+					white-space: pre-wrap;
+				}
+
+				.tweet-actions {
+					display: flex;
+					justify-content: space-between;
+					max-width: 425px;
+					margin-top: 4px;
+				}
+
+				.tweet-action {
+					display: flex;
+					align-items: center;
+					gap: 6px;
+					color: #536471;
+					font-size: 13px;
+					cursor: pointer;
+					border-radius: 9999px;
+					padding: 6px;
+					margin: -6px;
+					transition: color 0.2s;
+					background: none;
+					border: none;
+					font-family: inherit;
+				}
+
+				.tweet-action svg {
+					width: 18px;
+					height: 18px;
+					stroke: currentColor;
+					fill: none;
+					stroke-width: 1.75;
+					stroke-linecap: round;
+					stroke-linejoin: round;
+				}
+
+				.tweet-action:hover {
+					color: #1d9bf0;
+				}
+
+				.tweet-action:hover svg {
+					stroke: #1d9bf0;
+				}
+
+				.tweet-action.like:hover {
+					color: #f91880;
+				}
+
+				.tweet-action.like:hover svg {
+					stroke: #f91880;
+				}
+
+				.tweet-action.retweet:hover {
+					color: #00ba7c;
+				}
+
+				.tweet-action.retweet:hover svg {
+					stroke: #00ba7c;
+				}
+
+				/* ── Right panel ── */
+				.search-box {
+					position: relative;
+					margin-top: 8px;
+				}
+
+				.search-box input {
+					width: 100%;
+					background: #eff3f4;
+					border: 1px solid transparent;
+					border-radius: 9999px;
+					padding: 12px 16px 12px 44px;
+					font-size: 15px;
+					font-family: inherit;
+					color: #0f1419;
+					outline: none;
+					transition: all 0.2s;
+				}
+
+				.search-box input:focus {
+					background: #fff;
+					border-color: #1d9bf0;
+				}
+
+				.search-box svg {
+					position: absolute;
+					left: 14px;
+					top: 50%;
+					transform: translateY(-50%);
+					width: 18px;
+					height: 18px;
+					stroke: #536471;
+					fill: none;
+					stroke-width: 2;
+					stroke-linecap: round;
+					stroke-linejoin: round;
+				}
+
+				.trends-card, .who-to-follow-card {
+					background: #f7f9f9;
+					border: 1px solid #eff3f4;
+					border-radius: 16px;
+					overflow: hidden;
+				}
+
+				.card-title {
+					font-size: 20px;
+					font-weight: 800;
+					padding: 16px;
+					color: #0f1419;
+					border-bottom: 1px solid #eff3f4;
+				}
+
+				.trend-item {
+					padding: 12px 16px;
+					border-bottom: 1px solid #eff3f4;
+					cursor: pointer;
+					transition: background 0.15s;
+				}
+
+				.trend-item:last-child {
+					border-bottom: none;
+				}
+
+				.trend-item:hover {
+					background: rgba(0,0,0,0.03);
+				}
+
+				.trend-category {
+					font-size: 13px;
+					color: #536471;
+				}
+
+				.trend-name {
+					font-size: 15px;
+					font-weight: 700;
+					color: #0f1419;
+					margin: 2px 0;
+				}
+
+				.trend-count {
+					font-size: 13px;
+					color: #536471;
+				}
+
+				.follow-item {
+					display: flex;
+					align-items: center;
+					gap: 12px;
+					padding: 12px 16px;
+					border-bottom: 1px solid #eff3f4;
+					cursor: pointer;
+					transition: background 0.15s;
+				}
+
+				.follow-item:last-child {
+					border-bottom: none;
+				}
+
+				.follow-item:hover {
+					background: rgba(0,0,0,0.03);
+				}
+
+				.follow-info {
+					flex: 1;
+					min-width: 0;
+				}
+
+				.follow-name {
+					font-weight: 700;
+					font-size: 15px;
+					color: #0f1419;
+					display: block;
+				}
+
+				.follow-handle {
+					font-size: 13px;
+					color: #536471;
+					display: block;
+				}
+
+				.follow-btn {
+					background: #0f1419;
+					color: #fff;
+					border: none;
+					border-radius: 9999px;
+					padding: 8px 16px;
+					font-size: 14px;
+					font-weight: 700;
+					cursor: pointer;
+					transition: background 0.2s;
+					white-space: nowrap;
+					font-family: inherit;
+				}
+
+				.follow-btn:hover {
+					background: #272c30;
+				}
+
+				/* ── Responsive ── */
+				@media (max-width: 1280px) {
+					.right-panel { display: none; }
+				}
+
+				@media (max-width: 700px) {
+					.sidebar { width: 68px; }
+					.nav-label { display: none; }
+					.tweet-btn { width: 44px; height: 44px; padding: 0; font-size: 22px; display: flex; align-items: center; justify-content: center; }
+				}
+			</style>
+		</head>
+		<body>
+			<div class="app-wrapper">
+				{ children... }
+			</div>
+		</body>
+	</html>
+}
